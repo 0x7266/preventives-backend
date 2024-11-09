@@ -1,6 +1,7 @@
 package core
 
 type Technician struct {
+	Id   string
 	Name string
 }
 

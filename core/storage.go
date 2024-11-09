@@ -3,7 +3,8 @@ package core
 type Storage interface {
 	Connect()
 	CreateTechnician(t *Technician)
-	GetTechnician()
+	GetTechnicians() []Technician
+	GetTechnicianById(id string) (*Technician, error)
 	UpdateTechnician(t *Technician, p string)
-	DeleteTechnician(t *Technician)
+	DeleteTechnician(id string) error
 }
