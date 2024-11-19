@@ -33,7 +33,14 @@ func (s *server) Run() error {
 		w.Write([]byte("Ok"))
 	})
 	router.HandleFunc("GET /technicians", func(w http.ResponseWriter, r *http.Request) {
-		log.Println(s.storage.GetTechnicians())
+		var response []Technician
+		technicians := s.storage.GetTechnicians()
+		for _, t := range technicians {
+			response = append(response, parseTechnicianToJson(t))
+		}
+
+		w.Header().Add("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
 	})
 	router.HandleFunc("GET /technicians/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
@@ -79,4 +86,11 @@ func (s *server) Run() error {
 		s.address,
 	)
 	return server.ListenAndServe()
+}
+
+func parseTechnicianToJson(t core.Technician) Technician {
+	return Technician{
+		Id:   t.Id,
+		Name: t.Name,
+	}
 }
