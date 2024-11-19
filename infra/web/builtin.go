@@ -3,6 +3,7 @@ package web
 import (
 	"0x7266/preventives/core"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -50,13 +51,22 @@ func (s *server) Run() error {
 
 	})
 	router.HandleFunc("POST /technicians", func(w http.ResponseWriter, r *http.Request) {
-		log.Println("irstnirsnie")
 		var technician Technician
 		json.NewDecoder(r.Body).Decode(&technician)
 		s.storage.CreateTechnician(&core.Technician{
 			Id:   technician.Id,
 			Name: technician.Name,
 		})
+	})
+	router.HandleFunc("DELETE /technicians/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		err := s.storage.DeleteTechnician(id)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+		w.Write([]byte(fmt.Sprint("{} removed", id)))
+
 	})
 
 	server := http.Server{
